@@ -21,12 +21,39 @@ En esta sesión nos iniciaremos en la librería [React.js][react]. React es una 
 
 ## ¿Para qué sirve lo que vamos a ver en esta sesión?
 
-Es muy común en todos los ecosistemas de programación usar librerías o _frameworks_ que permiten terminar productos mucho más rápido y ahorran escribir código. JavaScript no es una excepción, y en su historia podemos contar varias librerías y _frameworks_ populares como jQuery &mdash;que suplió las carencias iniciales del lenguaje mientras maduraba&mdash;, Backbone.js, AngularJS o Ember.js.
+Es muy común en todos los ecosistemas de programación usar librerías o _frameworks_ que permiten terminar productos mucho más rápido y ahorran escribir código. JavaScript no es una excepción, y en su historia podemos contar varias librerías y _frameworks_ populares como jQuery &mdash;que suplió las carencias iniciales del lenguaje mientras maduraba&mdash;, Backbone.js, Angular o Vue.js.
 
-En particular, el manejo del DOM en proyectos grandes de JavaScript es una fuente de problemas. Desde las _single page applications_ (SPAs) se empezaron a desarrollar _frameworks_ que ayudaban a controlar esto, entre otras cosas. Hoy en día, React es una de las librerías más extendidas y maduras, con gran soporte de la comunidad y muchos recursos disponibles. React es una librería especializada en crear interfaces de usuario componentizadas, no un _framework_.
+En particular, el manejo del DOM en proyectos grandes de JavaScript es una fuente de problemas. Desde las _single page applications_ (SPAs) se empezaron a desarrollar _frameworks_ que ayudaban a controlar esto, entre otras cosas. Hoy en día, React es una de las librerías más extendidas y maduras, con gran soporte de la comunidad y muchos recursos disponibles. React es una librería especializada en crear interfaces de usuario componentizadas, no un _framework_, pero se suele meter en el "saco de los frameworks de front-end".
 
 En nuestra actividad profesional nos encontraremos con diferentes _frameworks_ y librerías. Aprender a usar una librería externa nos ayudará a enfrentarnos a estas situaciones en la vida real.
 
+## ¿En qué casos y por qué se utilizan los _frameworks_?
+
+Un framework o librería JavaScript nos soluciona uno de los principales problemas de la programación front-end: mantener la **interfaz de usuario** (UI, del inglés *User Interface*) en sincronización con el **estado** nuestra aplicación.
+
+Pero, *¿qué es el estado de una aplicación web?* Una aplicación web, a diferencia de una simple página web, se encarga de **gestionar datos**. Por ejemplo, en una aplicación como GMail gestionamos datos de correos (nuevos, leídos, archivados, etc.) desde una interfaz. En una simple aplicación de una lista de tareas, manejamos datos de tareas, si están completados o las fechas de realización.
+
+Volviendo a los frameworks, estos nos facilitan sincronizar el estado (los datos) con la interfaz (lo que se ve en la pantalla). Vamos a verlo con un ejemplo que ya conocemos: el juego de adivinar el número del sprint anterior. Necesitamos bastante código para tener sincronizado el estado del juego (el feedback sobre un intento y el número de intentos) con la interfaz.
+
+```js
+function showFeedback(text) {
+  var feedbackContainer = document.querySelector('.feedback');
+  feedbackContainer.innerHTML = text;
+}
+
+function incrementTrials() {
+  trials++;
+  var trialsOnPage = document.querySelector('.trials');
+  trialsOnPage.innerHTML = trials;
+}
+```
+
+Este código de sincronización puede complicarse mucho (como habéis podido comprobar en el proyecto grupal del sprint anterior). Y es también muy acoplado a la interfaz (cambiar el HTML implica cambios en el código) y es muy propenso a errores. Por esto, las librerías como React nos ayudan mucho porque hacen esta sincronización por nosotros y nos evitan muchos problemas. A cambio, vamos a tener que trabajar de una forma determinada para aprovechar las ventajas que el frameworks nos da.
+
+A parte de esta ventaja fundamental, otras ventajas de usar frameworks son
+- facilitan el trabajo con componentes web
+- tienen extensiones del navegador que facilitan el debugging
+- facilitan el desarrollo de SPAs (del inglés *Single Page Applications*)
 
 ## Qué es React
 
@@ -82,9 +109,9 @@ Basta de cháchara: ¡empecemos!
 
 ## "Hola, mundo" con `create-react-app`
 
-Vamos a crear nuestro primer "¡Hola, mundo!" con React. Usaremos `create-react-app`, una herramienta generador que nos automatiza instalar React y Babel, que transformará código ES6 en ES5, y nos preconfigura un proyecto. Manos a la obra.
+Vamos a crear nuestro primer "¡Hola, mundo!" con React. Usaremos `create-react-app`, una herramienta generador que nos automatiza instalar React y Babel, que transformará código ES6 en ES5, y nos preconfigura un proyecto. ¡Manos a la obra!
 
-Necesitaremos Node.js instalado. Primero instalamos de forma global la utilidad de `create-react-app`, y luego creamos nuestro proyecto de React 'my-react-project' ejecutando esto en un terminal:
+Necesitaremos Node.js instalado, pero esto ya lo tenemos. Primero instalamos de forma global la utilidad de `create-react-app`, y luego creamos nuestro proyecto de React 'my-react-project' ejecutando esto en un terminal:
 
 ```sh
 npm install -g create-react-app
@@ -150,7 +177,7 @@ También podemos añadir atributos a los elementos que creemos:
 const titleElement = <h1 className="App-title">¡Hola, mundo!</h1>;
 ```
 
-> `class` es una palabra reservada en JavaScript, así que tendremos que usar `className` como nombre de atributo cuando queramos asignar una clase CSS
+> **NOTA**: `class` es una palabra reservada en JavaScript, así que tendremos que usar `className` como nombre de atributo cuando queramos asignar una clase CSS
 
 ```js
 const titleClassNames = 'App-title';
@@ -208,7 +235,7 @@ render() {
 * * *
 
 
-## Interfaz declarativa VS imperativa
+## BONUS: Interfaz declarativa VS imperativa
 
 Con React haremos interfaces declarativas, en vez de imperativas. La programación declarativa nos permite focalizarnos en **el resultado final** de lo que programamos, en vez de en los detalles específicos de cómo se lleva a cabo el resultado.
 
@@ -264,311 +291,6 @@ ReactDOM.render(personCardComponent, personCardElement);
 Este flujo es más útil cuando creamos una aplicación web compleja que cambie mucho con la interacción del usuario o si recibimos **datos dinámicos** de un servidor. No importa lo que recibamos, una vez hayamos declarado lo que pintar en función a un formato dado, se pintará _solo_.
 
 
-## Creando nuestro primer componente
-
-Manos a la obra. Vamos a crear un componente que nos muestre una imagen aleatoria de un gato, y además será un enlace a una página. Creamos un proyecto con `create-react-app` y trabajaremos en el archivo `src/index.js`.
-
-Crearemos el componente después de todos los `import`s. Un componente será una subclase de la clase `Component` de React, así que escribiremos lo siguiente:
-
-```js
-class RandomCat extends React.Component {
-  // class body
-}
-```
-
-> Crearemos nuestros componentes siempre con **mayúscula inicial**. Así los diferenciaremos de los componentes en JSX que representan etiquetas de HTML
-
-Los componentes de React tienen un método `render()` que devuelve un elemento de JSX para que React lo pinte, así que sobrescribiremos ese método (es decir, que declararemos un método con ese nombre):
-
-```js
-class RandomCat extends React.Component {
-  render() {
-    return (
-      <a href="http://lorempixel.com">
-        <img src="http://lorempixel.com/400/200/cats/" alt="Random cat" />
-      </a>
-    );
-  }
-}
-```
-
-¡Ya está! Ahora para ver el resultado tendremos que decirle a React que lo pinte. Es tan fácil como cambiar la línea que empieza por `ReactDOM.render` y reemplazar `<App />` por `<RandomCat />`:
-
-```js
-ReactDOM.render(<RandomCat />, document.getElementById('root'));
-```
-
-Para terminar, pasaremos nuestro código a un módulo. Crearemos un archivo `RandomCat.js` en la misma carpeta `src` y pasaremos la declaración de la clase. Para que funcione, tendremos que `import`ar React de su módulo, así que añadiremos al principio:
-
-**RandomCat.js**:
-```js
-import React from 'react';
-// ...
-```
-
-Para que nuestro componente se pueda usar desde fuera del módulo, lo `export`aremos. Para eso, añadiremos al final:
-
-**RandomCat.js**:
-```js
-// ...
-export default RandomCat;
-```
-
-Ahora, para usar nuestro componente en el archivo `index.js`, tendremos que `import`ar nuestro componente del módulo, naturalmente. Escribiremos arriba:
-
-**index.js**:
-```js
-import React from 'react';
-// ...
-import RandomCat from './RandomCat';
-```
-
-> Para `import`ar de un archivo local, utilizaremos el prefijo `./` antes de la ruta. Sin embargo, no pondremos el prefijo cuando sea una dependencia en `npm`, como nos preconfigura `create-react-app` para `react` y `react-dom`.
-
-**Y voilá!** Nos debería quedar así:
-
-**RandomCat.js**:
-```js
-import React from 'react';
-
-class RandomCat extends React.Component {
-  render() {
-    return (
-      <a href="http://lorempixel.com">
-        <img src="http://lorempixel.com/400/200/cats/" alt="Random cat" />
-      </a>
-    );
-  }
-}
-
-export default RandomCat;
-```
-
-**index.js**:
-```js
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import RandomCat from './RandomCat';
-//import registerServiceWorker from './registerServiceWorker';
-
-ReactDOM.render(<RandomCat />, document.getElementById('root'));
-//registerServiceWorker();
-```
-
-> Las líneas comentadas son una añadidura de `create-react-app` para facilitar hacer _progressive web apps_, pero son completamente opcionales y por ahora no las utilizaremos.
-
-
-## Creando varios componentes
-
-Vamos a hacer un componente más que sea la sección donde se mostrarán distintos gatos. Tendrá un título y una lista con los gatos. Así veremos cómo usar componentes anidados.
-
-Nos vamos a acostumbrar a crear nuestros componentes de React en un directorio `components` para tenerlos todos juntos. Creamos el directorio, movemos `RandomCat.js` dentro y creamos un nuevo archivo `CatList.js`:
-
-**components/CatList.js**:
-```js
-import React from 'react';
-
-class CatList extends React.Component {
-  // class body
-}
-
-export default CatList;
-```
-
-El método `render()` devolverá un elemento `section` con un `h1` y una lista `ul` con tres elementos `li`:
-
-**components/CatList.js**:
-```js
-// ...
-class CatList extends React.Component {
-  render() {
-    return (
-      <section className="section-cats">
-        <h1>All Cats Are Beautiful</h1>
-        <ul className="section-cats_list">
-          <li>A cat</li>
-          <li>Another cat</li>
-          <li><i>Moar</i> cats</li>
-        </ul>
-      </section>
-    );
-  }
-}
-// ...
-```
-
-Como queremos usar `RandomCat` dentro de `CatList`, tendremos que importarlo en la parte superior del archivo:
-
-**components/CatList.js**:
-```js
-import React from 'react';
-import RandomCat from './RandomCat';
-// ...
-```
-
-Lo siguiente tenemos que agradecérselo a JSX: para usar nuestro componente solo tendremos que usarlo como si fuera una etiqueta de HTML normal. Así que cambiaremos cada uno de los textos de dentro de los elementos `li` por `<RandomCat />`:
-
-**components/CatList.js**:
-```js
-// ...
-<ul className="section-cats_list">
-  <li><RandomCat /></li>
-  <li><RandomCat /></li>
-  <li><RandomCat /></li>
-</ul>
-// ...
-```
-
-Finalmente, en el archivo `index.js` importaremos el componente `CatList` y le diremos a `ReactDOM` que `render`ice `<CatList />`:
-
-**index.js**:
-```js
-// ...
-import CatList from './components/CatList';
-
-ReactDOM.render(<CatList />, document.getElementById('root'));
-```
-
-Ahora se verán tres gatos iguales por la caché de los navegadores web (la dirección de la imagen es la misma y reutilizan la llamada al servidor). Podemos modificar el componente `RandomCat` para que siempre sea diferente generando un número aleatorio. Declaramos una pequeña función y el número de gatos disponibles:
-
-**RandomCat.js**:
-```js
-import React from 'react';
-
-const getRandomInteger = (maxNumber) => Math.floor(Math.random() * maxNumber);
-const NUMBER_OF_CATS = 10;
-// ...
-```
-
-Y ahora solo tendremos que modificar el método `render()` para incluir la llamada a la función, que se ejecutará cada vez que React pinte un componente `RandomCat`:
-
-**RandomCat.js**:
-```js
-// ...
-render() {
-  const randomCat = getRandomInteger(NUMBER_OF_CATS);
-
-  return (
-    <a href="http://lorempixel.com">
-      <img src={ `http://lorempixel.com/400/200/cats/${randomCat}` } alt="Random cat" />
-    </a>
-  );
-}
-```
-
-**¡Genial!** Nos quedará así:
-
-**index.js**:
-```js
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import CatList from './components/CatList';
-
-ReactDOM.render(<CatList />, document.getElementById('root'));
-```
-
-**components/CatList.js**:
-```js
-import React from 'react';
-import RandomCat from './RandomCat';
-
-class CatList extends React.Component {
-  render() {
-    return (
-      <section className="section-cats">
-        <h1>All Cats Are Beautiful</h1>
-        <ul className="section-cats_list">
-          <li><RandomCat /></li>
-          <li><RandomCat /></li>
-          <li><RandomCat /></li>
-        </ul>
-      </section>
-    );
-  }
-}
-
-export default CatList;
-```
-
-**components/RandomCat.js**:
-```js
-import React from 'react';
-
-const getRandomInteger = (maxNumber) => Math.floor(Math.random() * maxNumber);
-const NUMBER_OF_CATS = 10;
-
-class RandomCat extends React.Component {
-  render() {
-    const randomCat = getRandomInteger(NUMBER_OF_CATS);
-
-    return (
-      <a href="http://lorempixel.com">
-        <img src={ `http://lorempixel.com/400/200/cats/${randomCat}` } alt="Random cat" />
-      </a>
-    );
-  }
-}
-
-export default RandomCat;
-```
-
-
-## Las `props` para pasar datos entre componentes
-
-Hasta aquí todo bien, pero ¿y si queremos que `RandomCat` no sea siempre igual? De la misma manera que pasamos atributos a los elementos del DOM, podemos pasar datos a los componentes de React.
-
-```js
-class Greeting extends React.Component {
-  render() {
-    return (
-      <span>Hello, { this.props.name }!</span> // <span>Hello, María Moliner!</span>
-    );
-  }
-}
-
-const componentToRender = <Greeting name="María Moliner" />;
-
-ReactDOM.render(componentToRender, document.getElementById('root'));
-```
-
-Estos datos se llaman `props` y se guardan en un atributo de las instancias del mismo nombre. Podemos acceder a él a través de `this.props`, que es un objeto que contiene las claves y los valores de estos "atributos".
-
-```js
-render() {
-  console.log(this.props); // { name: 'María Moliner' }
-  // ...
-}
-```
-
-Una de las pocas reglas estrictas de React: **no debemos modificar nunca las `props`**, puesto que son como los parámetros que se le pasan a una función, o al constructor de una clase. Si queremos calcular con esos datos, podremos hacerlo dentro del `render()` del componente, antes de devolver el JSX:
-
-```js
-render() {
-  const upperCaseName = this.props.name.toUppercase();
-
-  return (
-    <span>Hello, { upperCaseName }!</span> // <span>Hello, MARÍA MOLINER!</span>
-  );
-}
-```
-
-* * *
-
-**EJERCICIO 2**:
-
-Usaremos las `props` para pasar el tamaño de la imagen a `RandomCat`. Pasaremos una anchura (`width`) y una altura (`height`), que serán enteros (píxeles). En el caso de que no se pasen `props`, `width` será de `400` y `height` será `200`.
-
-Desde `CatList` declararemos que se pinten tres componentes `RandomCat`:
-
-  - Uno de 200x200 px
-  - Otro de 200x400 px
-  - Otro, al que no pasaremos `props`, que será de 400x200 px
-
-* * *
-
-
 ## Recursos externos
 
 ### React Docs
@@ -576,13 +298,6 @@ Desde `CatList` declararemos que se pinten tres componentes `RandomCat`:
 Documentación oficial de React.
 
 - [Getting started](https://reactjs.org/docs/)
-
-### Egghead
-
-Serie de clases en vídeo que introduce y explora los fundamentos básicos de React.
-
-- [Start using React to build web applications](https://egghead.io/courses/start-learning-react)
-
 
 ### Create React App
 
